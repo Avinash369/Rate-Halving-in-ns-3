@@ -1116,6 +1116,32 @@ More information (paper):  https://dl.acm.org/citation.cfm?id=2068832
 
 More information (RFC):  https://tools.ietf.org/html/rfc6937
 
+Rate Halving
+^^^^^^^^^^^^
+Rate Halving is the loss recovery algorithm described in the Rate Halving 
+internet draft and was used in Linux before PRR. The Rate Halving algorithm 
+adjusts the congestion window by spacing transmissions at the rate of one 
+data segment per two segments acknowleged over the entire recovery period.
+
+Rate halving updates the congestion window by comparing the values of bytesInFlight 
+and ssThresh. If the value of bytesInFlight is greater than ssThresh, then for every 
+alternate acknowledgement congestion window is updated as shown below:
+
+.. math::  sendCount = 1 * segmentSize
+
+where ``sendCount`` represents the number of bytes to be sent in response to each ACK, 
+here we are setting it to 1 segment size for every alternate acknowledgment.
+
+Otherwise, the congestion window is updated by setting it with the ssThresh.
+
+.. math::  cWnd = ssThresh
+
+After calculating , the cWnd is updated as given below:
+
+.. math::  cWnd = pipe + sendCount
+
+More information (Internet Draft): https://tools.ietf.org/html/draft-mathis-tcp-ratehalving-00
+
 Adding a new loss recovery algorithm in ns-3
 ++++++++++++++++++++++++++++++++++++++++++++
 
