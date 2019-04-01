@@ -82,10 +82,10 @@ TcpRateHalvingRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedB
   int sendCount = 0;
   if (tcb->m_bytesInFlight > tcb->m_ssThresh)
     {
-      if (m_isAlternateAck)
+      if (m_isAlternateAck)     //Check for Alternate Ack's
         {
           m_isAlternateAck = false;
-          sendCount = 1 * tcb->m_segmentSize;
+          sendCount = 1 * tcb->m_segmentSize;          //Setting the byte size to be sent to 1 segment size for each Alternate ACK's
         }
       else 
         {
@@ -96,10 +96,10 @@ TcpRateHalvingRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedB
 
   else
     {
-      tcb->m_cWnd = tcb->m_ssThresh;
+      tcb->m_cWnd = tcb->m_ssThresh;    //Setting cwnd to ssThresh
     }
-  tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;
-  tcb->m_cWndInfl = tcb->m_cWnd;
+  tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;       //Updating cwnd with the sent byte
+  tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
 }
 
 void 
@@ -109,7 +109,6 @@ TcpRateHalvingRecovery::ExitRecovery (Ptr<TcpSocketState> tcb)
   tcb->m_cWnd = tcb->m_ssThresh.Get ();
   tcb->m_cWndInfl = tcb->m_cWnd;
 }
-
 
 Ptr<TcpRecoveryOps>
 TcpRateHalvingRecovery::Fork (void)

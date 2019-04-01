@@ -71,7 +71,7 @@ public:
   virtual Ptr<TcpRecoveryOps> Fork () override;
 
 private:
-  bool m_isAlternateAck                    {true};   //!< boolean variable to sent a data packet at every alternate ACK.
+  bool m_isAlternateAck                    {true};   //!< Boolean variable to sent a data packet at every alternate ACK.
 };
 } // namespace ns3
 
