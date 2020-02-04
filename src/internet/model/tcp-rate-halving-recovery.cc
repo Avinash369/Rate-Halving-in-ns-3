@@ -27,40 +27,40 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("TcpRecovery");
-NS_OBJECT_ENSURE_REGISTERED (TcpRecovery);
+NS_LOG_COMPONENT_DEFINE ("TcpRateHalvingRecovery");
+NS_OBJECT_ENSURE_REGISTERED (TcpRateHalvingRecovery);
 
 TypeId
-TcpRecovery::GetTypeId (void)
+TcpRateHalvingRecovery::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::TcpRecovery")
+  static TypeId tid = TypeId ("ns3::TcpRateHalvingRecovery")
     .SetParent<TcpClassicRecovery> ()
-    .AddConstructor<TcpRecovery> ()
+    .AddConstructor<TcpRateHalvingRecovery> ()
     .SetGroupName ("Internet")
   ;
   return tid;
 }
 
-TcpRecovery::TcpRecovery (void)
+TcpRateHalvingRecovery::TcpRateHalvingRecovery (void)
   : TcpClassicRecovery ()
 {
   NS_LOG_FUNCTION (this);
 }
 
-TcpRecovery::TcpRecovery (const TcpRecovery& recovery)
+TcpRateHalvingRecovery::TcpRateHalvingRecovery (const TcpRateHalvingRecovery& recovery)
   : TcpClassicRecovery (recovery),
   m_isAlternateAck (recovery.m_isAlternateAck)
 {
   NS_LOG_FUNCTION (this);
 }
 
-TcpRecovery::~TcpRecovery (void)
+TcpRateHalvingRecovery::~TcpRateHalvingRecovery (void)
 {
   NS_LOG_FUNCTION (this);
 }
 
 void
-TcpRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckCount,
+TcpRateHalvingRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckCount,
                                        uint32_t unAckDataCount, uint32_t lastSackedBytes)
 {
   NS_LOG_FUNCTION (this << tcb << dupAckCount << unAckDataCount << lastSackedBytes);
@@ -74,7 +74,7 @@ TcpRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckCount,
 }
 
 void
-TcpRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedBytes,
+TcpRateHalvingRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedBytes,
                                     uint32_t lastSackedBytes)
 {
   NS_LOG_FUNCTION (this << tcb << lastAckedBytes << lastSackedBytes);
@@ -92,20 +92,20 @@ TcpRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedBytes,
           m_isAlternateAck = true;
           sendCount = 0;
         }
+        tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;       //Updating cwnd with the sent byte
+        tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
     }
-     tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;       //Updating cwnd with the sent byte
-     tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
 
   else
     {
       tcb->m_cWnd = tcb->m_ssThresh;    //Setting cwnd to ssThresh
       tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
     }
- 
+  
 }
 
 void 
-TcpRecovery::ExitRecovery (Ptr<TcpSocketState> tcb)
+TcpRateHalvingRecovery::ExitRecovery (Ptr<TcpSocketState> tcb)
 {
   NS_LOG_FUNCTION (this << tcb);
   tcb->m_cWnd = tcb->m_ssThresh.Get ();
@@ -113,15 +113,15 @@ TcpRecovery::ExitRecovery (Ptr<TcpSocketState> tcb)
 }
 
 Ptr<TcpRecoveryOps>
-TcpRecovery::Fork (void)
+TcpRateHalvingRecovery::Fork (void)
 {
-  return CopyObject<TcpRecovery> (this);
+  return CopyObject<TcpRateHalvingRecovery> (this);
 }
 
 std::string
-TcpRecovery::GetName () const
+TcpRateHalvingRecovery::GetName () const
 {
-  return "Recovery";
+  return "RateHalvingRecovery";
 }
 
 } // namespace ns3
