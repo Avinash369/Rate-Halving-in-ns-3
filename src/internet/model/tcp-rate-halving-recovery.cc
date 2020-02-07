@@ -64,12 +64,14 @@ TcpRateHalvingRecovery::EnterRecovery (Ptr<TcpSocketState> tcb, uint32_t dupAckC
                                        uint32_t unAckDataCount, uint32_t lastSackedBytes)
 {
   NS_LOG_FUNCTION (this << tcb << dupAckCount << unAckDataCount << lastSackedBytes);
-  NS_UNUSED (dupAckCount);
+  //NS_UNUSED (dupAckCount);
   NS_UNUSED (unAckDataCount);
   NS_UNUSED (lastSackedBytes);
 
   m_isAlternateAck = false;
-
+  tcb->m_cWnd = tcb->m_ssThresh;
+  tcb->m_cWndInfl = tcb->m_ssThresh + (dupAckCount * tcb->m_segmentSize);
+  
   DoRecovery (tcb, 0, lastSackedBytes);
 }
 
