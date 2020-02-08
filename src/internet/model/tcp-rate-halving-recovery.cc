@@ -94,14 +94,16 @@ TcpRateHalvingRecovery::DoRecovery (Ptr<TcpSocketState> tcb, uint32_t lastAckedB
           m_isAlternateAck = true;
           sendCount = 0;
         }
+        tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;       //Updating cwnd with the sent byte
+        tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
     }
 
   else
     {
       tcb->m_cWnd = tcb->m_ssThresh;    //Setting cwnd to ssThresh
+      tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
     }
-  tcb->m_cWnd = tcb->m_bytesInFlight + sendCount;       //Updating cwnd with the sent byte
-  tcb->m_cWndInfl = tcb->m_cWnd;        //Inflating the cwnd
+  
 }
 
 void 
