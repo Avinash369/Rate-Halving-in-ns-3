@@ -19,7 +19,7 @@ for (int iterator=1;iterator<=100;iterator++)
 {
   bool tracing = false;
   uint32_t maxBytes = 500000;
-  std::string recoveryType = "ns3::ClassicRecovery";
+  std::string recoveryType = "ns3::TcpRateHalvingRecovery";
   std::string reductionBound = "SSRB";
 
 //
